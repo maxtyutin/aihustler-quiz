@@ -1214,4 +1214,57 @@ body.quiz-theme::before, body.quiz-theme::after {
   transform: translateY(10px);
 }
 
+/* Submit Quiz Button & Confirm Step */
+.quiz-confirm-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+}
+
+.quiz-confirm-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.8rem;
+  letter-spacing: -0.5px;
+}
+
+.quiz-confirm-text {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 320px;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.btn-submit-quiz {
+  display: inline-block;
+  background-color: #2563EB;
+  color: #ffffff;
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 1.1rem 2.2rem;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  margin-top: 1rem;
+  text-decoration: none;
+}
+
+.btn-submit-quiz:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.45);
+}
+
+.btn-submit-quiz:active {
+  transform: translateY(0);
+}
+
+
 

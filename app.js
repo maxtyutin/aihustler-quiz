@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (!container) return;
 
-  // Question configurations
+  // Question configurations (Exactly 3 questions)
   const questions = [
     {
       id: 'fullName',
@@ -16,30 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
       title: 'Ваше имя и фамилия? *',
       placeholder: 'Анна Тютина',
       errorText: 'Пожалуйста, введите ваше имя и фамилию',
-      validate: (val) => val.trim().length >= 2
-    },
-    {
-      id: 'email',
-      type: 'email',
-      title: 'Ваша почта? *',
-      placeholder: 'anya7_tyutina@vk.com',
-      errorText: 'Введите корректный адрес электронной почты',
-      validate: (val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim())
-    },
-    {
-      id: 'phone',
-      type: 'tel',
-      title: 'Номер телефона для связи? *',
-      placeholder: '+7(910)803-18-23',
-      errorText: 'Введите корректный номер телефона (не менее 9 цифр)',
-      validate: (val) => val.replace(/\D/g, '').length >= 9
-    },
-    {
-      id: 'country',
-      type: 'text',
-      title: 'В какой стране вы сейчас находитесь? *',
-      placeholder: 'Россия',
-      errorText: 'Пожалуйста, укажите вашу страну',
       validate: (val) => val.trim().length >= 2
     },
     {
@@ -51,14 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
       validate: (val) => /^@?[\w]{3,32}$/.test(val.trim())
     },
     {
-      id: 'blogStatus',
-      type: 'choice',
-      title: 'Вы уже ведете блог или только начинаете? *',
-      errorText: 'Пожалуйста, выберите один из вариантов',
-      choices: [
-        { key: 'beginner', letter: 'A', text: 'Только начинаю' },
-        { key: 'active', letter: 'B', text: 'Уже веду блог' }
-      ]
+      id: 'phone',
+      type: 'tel',
+      title: 'Номер телефона для связи? *',
+      placeholder: '+7(910)803-18-23',
+      errorText: 'Введите корректный номер телефона (не менее 9 цифр)',
+      validate: (val) => val.replace(/\D/g, '').length >= 9
     }
   ];
 
@@ -77,39 +51,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
   nextBtn.addEventListener('click', () => {
     if (validateAndSave()) {
-      if (currentIndex < questions.length - 1) {
+      if (currentIndex < questions.length) {
         navigateQuestion(currentIndex + 1);
-      } else {
-        submitQuiz();
       }
     }
   });
 
-  // Global keyboard listener for Enter key and Choice Shortcuts (A / B)
+  // Global keyboard listener for Enter key
   document.addEventListener('keydown', (e) => {
     const activeElement = document.activeElement;
     
-    // Ignore key shortcuts if user is typing in inputs but Enter is allowed
     if (e.key === 'Enter') {
       if (activeElement && activeElement.classList.contains('quiz-input')) {
         e.preventDefault();
         nextBtn.click();
       }
     }
-
-    // A/B choice shortcuts when on choice step
-    const currentQ = questions[currentIndex];
-    if (currentQ.type === 'choice') {
-      if (e.key.toLowerCase() === 'a') {
-        selectChoice('beginner');
-      } else if (e.key.toLowerCase() === 'b') {
-        selectChoice('active');
-      }
-    }
   });
 
   // Render question DOM content
   function renderQuestion() {
+    // If we reached the end (after answering the last question), show confirm step
+    if (currentIndex === questions.length) {
+      container.innerHTML = `
+        <div class="quiz-confirm-container">
+          <div class="quiz-confirm-title">Все готово!</div>
+          <div class="quiz-confirm-text">
+            Нажмите кнопку ниже, чтобы отправить форму и получить личный разбор.
+          </div>
+          <button type="button" class="btn-submit-quiz" id="confirmSubmitBtn">
+            Получить личный разбор
+          </button>
+        </div>
+      `;
+
+      const confirmBtn = document.getElementById('confirmSubmitBtn');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', submitQuiz);
+      }
+
+      // Update navigation controls
+      prevBtn.disabled = false;
+      nextBtn.disabled = true;
+      nextBtn.classList.remove('highlighted');
+      return;
+    }
+
     const q = questions[currentIndex];
     const prevAnswer = answers[q.id] || '';
 
@@ -117,91 +104,35 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="quiz-question-title">
         <span class="question-number-box">${currentIndex + 1}</span>${q.title}
       </div>
+      <div class="quiz-input-container">
+        <input type="${q.type}" id="${q.id}" class="quiz-input" placeholder="${q.placeholder}" value="${prevAnswer}" autocomplete="off">
+        <button type="button" class="quiz-ok-btn" id="okBtn">
+          ОК <span style="font-size: 0.8rem; margin-left: 2px;">✔</span>
+        </button>
+        <span class="keyboard-helper">нажмите Enter ↵</span>
+      </div>
+      <div class="quiz-error-message" id="quizError">${q.errorText}</div>
     `;
 
-    if (q.type === 'choice') {
-      html += `
-        <div class="choices-container">
-          ${q.choices.map(c => `
-            <div class="choice-item ${prevAnswer === c.key ? 'selected' : ''}" data-value="${c.key}">
-              <span class="choice-letter">${c.letter}</span>
-              <span class="choice-text">${c.text}</span>
-            </div>
-          `).join('')}
-        </div>
-      `;
-    } else {
-      html += `
-        <div class="quiz-input-container">
-          <input type="${q.type}" id="${q.id}" class="quiz-input" placeholder="${q.placeholder}" value="${prevAnswer}" autocomplete="off">
-          <button type="button" class="quiz-ok-btn" id="okBtn">
-            ОК <span style="font-size: 0.8rem; margin-left: 2px;">✔</span>
-          </button>
-          <span class="keyboard-helper">нажмите Enter ↵</span>
-        </div>
-      `;
-    }
-
-    html += `<div class="quiz-error-message" id="quizError">${q.errorText}</div>`;
     container.innerHTML = html;
 
-    // Hook listeners
-    if (q.type === 'choice') {
-      const items = container.querySelectorAll('.choice-item');
-      items.forEach(item => {
-        item.addEventListener('click', () => {
-          selectChoice(item.getAttribute('data-value'));
-        });
+    const okBtn = document.getElementById('okBtn');
+    if (okBtn) {
+      okBtn.addEventListener('click', () => {
+        nextBtn.click();
       });
-    } else {
-      const okBtn = document.getElementById('okBtn');
-      if (okBtn) {
-        okBtn.addEventListener('click', () => {
-          nextBtn.click();
-        });
-      }
-      
-      // Auto-focus input
-      const input = container.querySelector('.quiz-input');
-      if (input) {
-        input.focus();
-      }
+    }
+    
+    // Auto-focus input
+    const input = container.querySelector('.quiz-input');
+    if (input) {
+      input.focus();
     }
 
     // Update navigation arrows state
     prevBtn.disabled = currentIndex === 0;
-    
-    const isNextDisabled = q.type === 'choice' && !answers[q.id];
-    nextBtn.disabled = isNextDisabled;
-    
-    if (!isNextDisabled) {
-      nextBtn.classList.add('highlighted');
-    } else {
-      nextBtn.classList.remove('highlighted');
-    }
-  }
-
-  // Handle choice selection (triggers immediate animation to next question)
-  function selectChoice(value) {
-    const items = container.querySelectorAll('.choice-item');
-    items.forEach(item => {
-      if (item.getAttribute('data-value') === value) {
-        item.classList.add('selected');
-      } else {
-        item.classList.remove('selected');
-      }
-    });
-
-    answers[questions[currentIndex].id] = value;
-    
-    // Smooth delay before advancing
-    setTimeout(() => {
-      if (currentIndex < questions.length - 1) {
-        navigateQuestion(currentIndex + 1);
-      } else {
-        submitQuiz();
-      }
-    }, 250);
+    nextBtn.disabled = false;
+    nextBtn.classList.add('highlighted');
   }
 
   // Navigate with smooth slide transition
@@ -222,17 +153,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Validate current answer and save to local state
   function validateAndSave() {
+    if (currentIndex === questions.length) return true;
+
     const q = questions[currentIndex];
     const errorEl = document.getElementById('quizError');
-    
-    if (q.type === 'choice') {
-      const hasAnswer = !!answers[q.id];
-      if (!hasAnswer && errorEl) {
-        errorEl.style.display = 'block';
-      }
-      return hasAnswer;
-    }
-
     const input = container.querySelector('.quiz-input');
     if (!input) return false;
 
@@ -265,19 +189,16 @@ document.addEventListener('DOMContentLoaded', () => {
     return true;
   }
 
-  // Submit and Redirect
+  // Submit and show success
   async function submitQuiz() {
     const spinner = document.getElementById('loadingSpinner');
     const successIcon = document.getElementById('successIcon');
 
-    // Ensure all data matches key format expected by sale.html
+    // Ensure all data matches key format expected by FormSubmit
     const leadData = {
       fullName: answers.fullName,
-      email: answers.email,
       phone: answers.phone,
-      country: answers.country,
       telegram: answers.telegram.startsWith('@') ? answers.telegram : '@' + answers.telegram,
-      blogStatus: answers.blogStatus,
       timestamp: new Date().toISOString()
     };
 
@@ -317,11 +238,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         body: JSON.stringify({
           "Имя и Фамилия": leadData.fullName,
-          "E-mail": leadData.email,
           "Телефон": leadData.phone,
-          "Страна": leadData.country,
           "Telegram": leadData.telegram,
-          "Статус Блога": leadData.blogStatus === 'active' ? 'Уже ведет блог' : 'Только начинает',
           "_subject": `Новый лид AI Hustlers: ${leadData.fullName} (${leadData.telegram})`,
           "_template": "table",
           "landing_page": window.location.pathname,
