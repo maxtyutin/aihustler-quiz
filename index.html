@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Квиз | AI Hustlers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="quiz-theme">
+
+  <!-- Loading / Redirecting Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner" id="loadingSpinner"></div>
+    <div class="success-icon" id="successIcon" style="display: none;">
+      <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10" stroke="#00f2fe" stroke-width="2" fill="rgba(0, 242, 254, 0.1)"/>
+        <path d="M8 12.5L11 15.5L16 9.5" stroke="#00ff87" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="loading-text" id="loadingText">Сохранение ответов...</div>
+    <div class="loading-subtext" id="loadingSubtext">Пожалуйста, подождите, мы генерируем вашу стратегию.</div>
+  </div>
+
+  <!-- Top Navigation Header Bar -->
+  <header class="quiz-top-header">
+    <div class="header-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="#0B0B0C"/>
+        <path d="M2 17L12 22L22 17" fill="#0B0B0C"/>
+        <path d="M2 12L12 17L22 12" fill="#0B0B0C"/>
+      </svg>
+      <span>AI HUSTLERS</span>
+    </div>
+    <div class="header-badge">
+      ✓ ШАГ 1 ИЗ 2
+    </div>
+  </header>
+
+  <div class="narrow-container" style="text-align: center; margin-top: 1.5rem; z-index: 5;">
+    <!-- Top Step Tracker (matching screenshot rings and font) -->
+    <div class="step-tracker">
+      <div class="step-dot active" id="trackerStep1">
+        <div class="dot-outer">
+          <div class="dot-inner">1</div>
+        </div>
+        <span class="step-label">ОТВЕТЬТЕ НА 6 ВОПРОСОВ</span>
+      </div>
+      <div class="tracker-line"></div>
+      <div class="step-dot" id="trackerStep2">
+        <div class="dot-outer grey">
+          <div class="dot-inner">2</div>
+        </div>
+        <span class="step-label">ПОЛУЧИТЕ СТРАТЕГИЮ</span>
+      </div>
+    </div>
+
+    <!-- Header Copy (matching lowercase styles) -->
+    <div class="quiz-title-area">
+      <h1>
+        ответьте на 6 быстрых вопросов.<br>
+        <span>это займет 60 секунд.</span>
+      </h1>
+      <p>
+        заполните форму и вы сразу перейдете к персональной стратегии. вот и всё.
+      </p>
+    </div>
+
+    <!-- Quiz Card -->
+    <div class="quiz-card" id="quizCard">
+      <div class="quiz-card-body">
+        <!-- Quiz Logo inside card -->
+        <div class="quiz-logo">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 17L12 22L22 17" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12L12 17L22 12" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>AI HUSTLERS</span>
+        </div>
+
+        <!-- Question Slide Container -->
+        <div class="slide-container" id="quizQuestionContainer">
+          <!-- Question content is rendered dynamically here by app.js -->
+        </div>
+
+        <!-- Nav Controls in bottom right of the card -->
+        <div class="quiz-nav-controls">
+          <button class="quiz-nav-arrow" id="quizPrevBtn" type="button" aria-label="Предыдущий вопрос">
+            ▲
+          </button>
+          <button class="quiz-nav-arrow" id="quizNextBtn" type="button" aria-label="Следующий вопрос">
+            ▼
+          </button>
+        </div>
+      </div>
+      <!-- Card dark bottom footer bar -->
+      <div class="quiz-card-footer"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
